@@ -80,8 +80,9 @@ static struct {
   "IO_FLD"      ,   500 ,	/* -- Step interval for field dumps.     */
   "IO_HIS"      ,   10  ,	/* -- Step interval for history points.  */
   "IO_CFL"      ,   50  ,	/* -- Step interval for CFL + divergence.*/
+  "IO_TSO"      ,   50  , /* -- Step interval for time step info.  */
   "IO_MDL"      ,   50  ,	/* -- Step interval for modal energy.    */
-  "IO_WSS"      ,   0   ,       /* -- Step interval + toggle of WSS out. */
+  "IO_WSS"      ,   0   , /* -- Step interval + toggle of WSS out. */
 
   "N_P"         ,   5   ,	/* -- No. of points along element edge.  */
   "N_TIME"      ,   2   ,	/* -- Order of timestepping scheme.      */

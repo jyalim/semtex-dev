@@ -35,8 +35,7 @@ static char RCS[] = "$Id: analysis.cpp,v 8.1 2015/04/20 11:14:17 hmb Exp $";
 #include <sem.h>
 
 
-Analyser::Analyser (Domain* D   ,
-		    FEML*   file) :
+Analyser::Analyser (Domain* D   , FEML*   file) :
 // ---------------------------------------------------------------------------
 // Set up.
 //
@@ -186,8 +185,7 @@ Analyser::Analyser (Domain* D   ,
 }
 
 
-void Analyser::analyse (AuxField** work0,
-			AuxField** work1)
+void Analyser::analyse (AuxField** work0, AuxField** work1)
 // ---------------------------------------------------------------------------
 // Step-by-step processing.  If SPAWN was set, add more particles at
 // original absolute positions.
@@ -195,6 +193,7 @@ void Analyser::analyse (AuxField** work0,
 {
   const int_t verbose = Femlib::ivalue ("VERBOSE");
   const int_t cflstep = Femlib::ivalue ("IO_CFL" );
+  const int_t tsostep = Femlib::ivalue ("IO_TSO" );
   const bool  add     = Femlib::ivalue ("SPAWN"  ) &&
     ! (_src -> step   % Femlib::ivalue ("SPAWN"  ));
 
@@ -203,13 +202,14 @@ void Analyser::analyse (AuxField** work0,
   // -- Step-by-step updates.
 
   ROOTONLY {
-
     // -- Run information update.
-
-    cout << "Step: " << _src -> step << "  Time: " << _src -> time << endl;
-
+    if ( tsostep > 0 && ( _src->step % tsostep  == 0 ) ) {
+        cout << "Step: "   << _src->step 
+             << "  Time: " << _src->time 
+             << endl;
+    }
+    //
     // -- Track particles.
-
     if (add) {
       FluidParticle *F;
       Point          P, *I;
