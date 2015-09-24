@@ -13,13 +13,13 @@ Note that the majority of the source code is written in `C++`.
 Recommended Install Method with Intel Compilers 15.0 or greater and MPI
 -----------------------------------------------------------------------
 
-    make -j $(nproc) CXX=mpicxx                         \
-                     LD=mpicxx                          \
-                     CC=mpicc                           \
-                     FC=mpifort                         \
-                     F77LIBS='-mkl -lstdc++ -lifcore'   \
-                     OPTS='-xavx -m64 -O3 -w'           \
-                     target
+    make -j $(nproc) target                 \
+         CXX=mpicxx                         \
+         LD=mpicxx                          \
+         CC=mpicc                           \
+         FC=mpifort                         \
+         F77LIBS='-mkl -lstdc++ -lifcore'   \
+         OPTS='-xavx -m64 -O3 -w'           
 
 Note, that if making for the Xeon Phi, OPTS should have additional flag,
 `-mmic` (along with various optimization flags). 

@@ -541,11 +541,12 @@ static void write_vtk (FILE *fp)
         offset1 = (cylindrical) ? (m%nzp)*nplane : m*nplane;
         offset1 += k*nrns;
         for (i = 0; i < nrns; i++) {
-          v_out[0] = data[0][offset1+i];
-          v_out[1] = data[1][offset1+i];
-          v_out[2] = (type[2] == 'w') ? data[2][offset+i] : 0.0;
+          offset2  = offset1 + i;
+          v_out[0] = data[0][offset2];
+          v_out[1] = data[1][offset2];
+          v_out[2] = (type[2] == 'w') ? data[2][offset2] : 0.0;
           for ( l = 0; l < 3; l++ ) {
-            fprintf(fp,"%#14.7g ", v_out[l])  
+            fprintf(fp,"%#14.7g ", v_out[l]);
           }
           fprintf(fp, "\n");
         }
