@@ -28,7 +28,24 @@ As long as the `mpi` compilers were compiled with the respective Intel
 compilers, there should be no issues in compilation.
 
 First run `make` with target `test` as to ensure the software will
-generally run. After success, the targets to compile are `all` and
-`parallel`.
+generally run. Then, test with `partest`. After successes, the targets
+to compile are `all` and `parallel`.
+
+Generally After Install
+-----------------------
+
+There are two important binaries in the `utilities` directory that have
+naming conflicts with commonly installed binaries. These are `compare`
+and `convert`, and they clash with ImageMagick's two binaries of the
+same name. If seeing errors related to images such as missing libpng
+dependencies, then the ImageMagick binaries are probably higher in the
+path then SEMTEX's. This can be checked with `which -a compare`.
+
+Because of this, and due to the specific and otherwise noncolliding
+binary names, the following is a sufficient way to get SEMTEX's binaries
+in the path:
+
+    export PATH=":$path_to_utility:$path_to_dns:$path_to_elliptic:$PATH:"
+
 
 
