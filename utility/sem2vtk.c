@@ -437,11 +437,12 @@ static void write_vtk (FILE *fp)
  * Write VTK file in ASCII format.
  * ------------------------------------------------------------------------- */
 {
-  register int i, j, k, m;
+  register int i, j, k, m, l;
   const int    nrns = nr * ns, nplane = nr * ns * nel;
   /* write an extra plane of cells to link up last plane with first */
   const int    nzpc = (cylindrical) ? nzp : nzp-1;
   unsigned int offset1 = 0, offset2 = 0;
+  float v_out[3];
 
   /* write the VTK header--  could customise the descriptive string */
 
@@ -452,31 +453,33 @@ static void write_vtk (FILE *fp)
   /* define grid */
   fprintf (fp, "DATASET UNSTRUCTURED_GRID\n");
   fprintf (fp, "POINTS %i float\n", nel*nzp*nrns);
-  for (m = 0; m < nzp; m++) {	   /* go over z planes nzp=1 for 2D      */
+  for (m = 0; m < nzp; m++) {	   /* go over z planes nzp=1 for 2D        */
     for (k = 0; k < nel; k++) {	   /* go over elements                   */
       for (i = 0; i < nrns; i++) { /* go over x-y points in each element */
+        /* write out x,y coordinate, adjusting if cylindrical coords     */
+        if (cylindrical) {
+          fprintf(
+            fp, "%#14.7g %#14.7g ", 
+              x[k*nrns + i], y[k*nrns + i] * sin(z[m%nzp])
+          );
+        } else {
+          fprintf(
+            fp, "%#14.7g %#14.7g ", x[k*nrns + i], y[k*nrns + i]
+          );
+        }
+        /* write out z coordinate if we're in 3D, again adjusting
+           for cylindrical coordinates if necessary */
 
-	/* write out x,y coordinate, adjusting if cylindrical coords */
-
-	if (cylindrical)
-	  fprintf(fp, "%#14.7g %#14.7g ", x[k*nrns + i],
-		  y[k*nrns + i] * sin(z[m%nzp]));
-	else
-	  fprintf(fp, "%#14.7g %#14.7g ", x[k*nrns + i],
-		  y[k*nrns + i]);
-	/* write out z coordinate if we're in 3D, again adjusting
-	   for cylindrical coordinates if necessary */
-
-	if (z) {
-	  if (cylindrical)
-	    fprintf(fp, "%#14.7g ", y[k*nrns+i]*cos(z[m%nzp]));
-	  else
-	    fprintf(fp, "%#14.7g ", z[m]);
-	}
-	else
-	  fprintf(fp, "         0.0 ");
-	/* done writing this point, new line */
-	fprintf(fp,"\n");
+        if (z) {
+          if (cylindrical)
+            fprintf(fp, "%#14.7g ", y[k*nrns+i]*cos(z[m%nzp]));
+          else
+            fprintf(fp, "%#14.7g ", z[m]);
+        } else {
+          fprintf(fp, "         0.0 ");
+        }
+        /* done writing this point, new line */
+        fprintf(fp,"\n");
       }
     }
   }
@@ -534,42 +537,45 @@ static void write_vtk (FILE *fp)
     fprintf(fp, "VECTORS Velocity float\n");
     for (m = 0; m < nzp; m++) {
       for (k = 0; k < nel; k++) {
-	/* plane/element offset */
-	offset1 = (cylindrical) ? (m%nzp)*nplane : m*nplane;
-	offset1 += k*nrns;
-	for (i = 0; i < nrns; i++) {
-	  /* u, v values are in 1st and 2nd data array */
-	  fprintf(fp, "%#14.7g ", data[0][offset1 + i]);
-	  fprintf(fp, "%#14.7g ", data[1][offset1 + i]);
-	  if (type[2] == 'w') fprintf(fp, "%14.7g ", data[2][offset1 + i]);
-	  else fprintf(fp, "0.0 ");
-	  fprintf(fp, "\n");
-	}
+        /* plane/element offset */
+        offset1 = (cylindrical) ? (m%nzp)*nplane : m*nplane;
+        offset1 += k*nrns;
+        for (i = 0; i < nrns; i++) {
+          v_out[0] = data[0][offset1+i];
+          v_out[1] = data[1][offset1+i];
+          v_out[2] = (type[2] == 'w') ? data[2][offset+i] : 0.0;
+          for ( l = 0; l < 3; l++ ) {
+            fprintf(fp,"%#14.7g ", v_out[l])  
+          }
+          fprintf(fp, "\n");
+        }
       }
     }
     if (type[2] == 'w') j = 3; else j = 2;
   }
 
   /* print out scalar values */
-
+  // NOTE: j is set from previous field writing
   for (; j < nfields; j++) {
     fprintf(fp, "SCALARS %c float\n", type[j]);
     fprintf(fp, "LOOKUP_TABLE default\n");
     for (m = 0; m < nzp; m++) {
       for (k = 0; k < nel; k++) {
-	/* plane/element offset */
-	offset1 = (cylindrical) ? (m%nzp)*nplane : m*nplane;
-	offset1 += k*nrns;
-	for (i = 0; i < nrns; i++) {
-	  /* pressure is in 3rd data array */
-	  fprintf(fp, "%#14.7g\n", data[j][offset1 + i]);
-	}
+        /* plane/element offset */
+        offset1 = (cylindrical) ? (m%nzp)*nplane : m*nplane;
+        offset1 += k*nrns;
+        for (i = 0; i < nrns; i++) {
+          /* pressure is in 3rd data array */
+          fprintf(fp, "%#14.7g\n", data[j][offset1 + i]);
+        }
       }
     }
     fprintf(fp, "\n");
   }
 
-  for (i = 0; i < nfields; i++)
+  for (i = 0; i < nfields; i++) {
     free (data[i]);
+  }
+
   fflush (fp);
 }
