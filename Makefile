@@ -70,13 +70,14 @@ parlib:
 all: libs
 	cd utility;  $(MAKE) clean; $(MAKE) -s all
 	cd elliptic; $(MAKE) clean; $(MAKE) -s
-	cd dns;      $(MAKE) clean; $(MAKE) -s; $(MAKE) -s tbcs
+	cd dns;      $(MAKE) clean; $(MAKE) -s; 
+	#$(MAKE) -s tbcs
 
 # ----------------------------------------------------------------------------
 # Compile parallel executables.
 
 parallel: parlib
-	cd dns; $(MAKE) MPI=1; $(MAKE) tbcs MPI=1
+	cd dns; $(MAKE) MPI=1; #$(MAKE) tbcs MPI=1
 	cd elliptic; $(MAKE) MPI=1
 
 # ----------------------------------------------------------------------------
