@@ -7,19 +7,22 @@
 # run.
 ##############################################################################
 
+cat << __EOF 
 SSN=Msten50_50D
 ROOTD=..
 
 WD=`pwd` # -- Assume last extension of directory name is new parameter.
-NP=`echo $WD | sed "s+.*./++"`
+NP=`echo \${WD} | sed "s+.*./++"`
 
+# DANGEROUS
 rm -rf * .sequence
-sed "s/URED.*=.*/URED=$NP/" < $ROOTD/$SSN  > $SSN
+sed "s/URED.*=.*/URED=\${NP}/" < \${ROOTD}/\${SSN}  > \${SSN}
 
-ln -s $ROOTD/$SSN.num .
-ln -s $ROOTD/$SSN.rst .
-ln -s $ROOTD/$SSN.geom .
-ln -s $ROOTD/$SSN.map .
+ln -s \${ROOTD}/\${SSN}.num  .
+ln -s \${ROOTD}/\${SSN}.rst  .
+ln -s \${ROOTD}/\${SSN}.geom .
+ln -s \${ROOTD}/\${SSN}.map  .
 
-nice /home/hmb/bin/dns_tbcs $SSN > /dev/null
-/home/hmb/bin/save $SSN
+nice /home/hmb/bin/dns_tbcs \${SSN} > /dev/null
+/home/hmb/bin/save \${SSN}
+__EOF

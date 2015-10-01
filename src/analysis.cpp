@@ -204,8 +204,9 @@ void Analyser::analyse (AuxField** work0, AuxField** work1)
   ROOTONLY {
     // -- Run information update.
     if ( tsostep > 0 && ( _src->step % tsostep  == 0 ) ) {
-        cout << "Step: "   << _src->step 
-             << "  Time: " << _src->time 
+        cout << "Step: "    << _src->step 
+             << "  Time: "  << _src->time 
+             << "  u_{5,5}" << _src-> u[4]
              << endl;
     }
     //
