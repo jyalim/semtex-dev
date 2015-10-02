@@ -1,0 +1,122 @@
+# 15 element driven cavity flow.
+# (x,y,z) = (z,r,theta)
+# (u,v,w) = (z,r,theta)'
+# p = pressure
+
+<FIELDS>
+  u v w p 
+</FIELDS>
+
+<TOKENS>
+  IO_CFL        = 500        
+  IO_TSO        = 500
+  IO_FLD        = 10000      
+  IO_HIS        = 10
+  CYLINDRICAL   = 1          
+  N_Z           = 16          
+  N_P           = 12
+  N_TIME        = 2
+  Re            = 1200
+  BETA          = 1.0        
+  N_STEP        = 10e5        
+  D_T           = 1e-5
+  TOL_REL       = 1e-12      
+  TOL_ABS       = TOL_REL    
+  Radius_Ratio  = 0.5        
+  Radius_Outer  = 2.0        
+  Radius_Inner  = Radius_Ratio * Radius_Outer 
+  Radius_Metric = Radius_Outer - Radius_Inner 
+  KINVIS        = 1          
+</TOKENS>
+
+ 
+<GROUPS NUMBER=2>
+  1 w wall
+  2 v velocity
+</GROUPS>
+
+<BCS NUMBER=2>
+  1 w 4
+      <D> u = 0 </D>
+      <D> v = 0 </D>
+      <D> w = 0 </D>
+      <H> p = 0 </H>
+  2 v 4
+      <D> u = 0       </D>
+      <D> v = 0       </D>
+      <D> w = y*Re    </D>
+      <H> p = 0       </H>
+</BCS>
+
+<NODES NUMBER=24>
+  1   -.50    1       0
+  2   -.46    1       0
+  3   -.20    1       0
+  4   0.20    1       0
+  5   0.46    1       0
+  6   0.50    1       0
+  7   -.50    1.20    0
+  8   -.46    1.20    0
+  9   -.20    1.20    0
+  10  0.20    1.20    0
+  11  0.46    1.20    0
+  12  0.50    1.20    0
+  13  -.50    1.80    0
+  14  -.46    1.80    0
+  15  -.20    1.80    0
+  16  0.20    1.80    0
+  17  0.46    1.80    0
+  18  0.50    1.80    0
+  19  -.50    2       0
+  20  -.46    2       0
+  21  -.20    2       0
+  22  0.20    2       0
+  23  0.46    2       0
+  24  0.50    2       0
+</NODES>
+
+<ELEMENTS NUMBER=15>
+  1   <Q>   1  2  8  7  </Q>
+  2   <Q>   2  3  9  8  </Q>
+  3   <Q>   3  4 10  9  </Q>
+  4   <Q>   4  5 11 10  </Q>
+  5   <Q>   5  6 12 11  </Q>
+  6   <Q>   7  8 14 13  </Q>
+  7   <Q>   8  9 15 14  </Q>
+  8   <Q>   9 10 16 15  </Q>
+  9   <Q>  10 11 17 16  </Q>
+  10  <Q>  11 12 18 17  </Q>
+  11  <Q>  13 14 20 19  </Q>
+  12  <Q>  14 15 21 20  </Q>
+  13  <Q>  15 16 22 21  </Q>
+  14  <Q>  16 17 23 22  </Q>
+  15  <Q>  17 18 24 23  </Q>
+</ELEMENTS>
+
+<SURFACES NUMBER=16>
+  1  1   1  <B>  v  </B>
+  2  2   1  <B>  v  </B>
+  3  3   1  <B>  v  </B>
+  4  4   1  <B>  v  </B>
+  5  5   1  <B>  v  </B>
+  6  5   2  <B>  w  </B>
+  7  10  2  <B>  w  </B>
+  8  15  2  <B>  w  </B>
+  9  15  3  <B>  w  </B>
+  10 14  3  <B>  w  </B>
+  11 13  3  <B>  w  </B>
+  12 12  3  <B>  w  </B>
+  13 11  3  <B>  w  </B>
+  14 11  4  <B>  w  </B>
+  15 6   4  <B>  w  </B>
+  16 1   4  <B>  w  </B>
+</SURFACES>
+
+<HISTORY NUMBER=1>
+  1 .3 1.1   PI/3
+  2 .3 1.1 2*PI/3
+  3 .3 1.1   PI
+  4 .3 1.1 4*PI/3
+  5 .3 1.1 5*PI/3
+  6 .3 1.1 2*PI
+</HISTORY>
