@@ -68,7 +68,7 @@ public:
 
   AuxField& gradient (const int_t);
   AuxField& sqroot   ();
-  AuxField& mulY     ();
+  AuxField& mulY     ();      // Multiply field by position y
   AuxField& divY     ();
   AuxField& mulX     ();
   AuxField& sgn      ();
