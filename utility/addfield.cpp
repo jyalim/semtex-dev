@@ -24,7 +24,7 @@
 //   -D        ... add discriminant of velocity gradient tensor
 //                 NB: divergence is assumed to be zero. (3D only)
 //   -J        ... add vortex core measure of Jeong & Hussain. (3D only)
-//   -l        ... add angular momentum (Cylindrical only).
+//   -l        ... add angular momentum (Cylindrical & 3D only).
 //   -a        ... add all fields derived from velocity (above)
 //   -f <func> ... add a computed function <func> of x, y, z, t, etc.
 //
@@ -54,7 +54,7 @@
 // e -- enstrophy 0.5*(r^2 + s^2 + t^2) = 0.5 (omega . omega)
 // f -- a computed function of spatial variables
 // g -- strain rate magnitude sqrt(2SijSij)
-// l -- angular momentum = radius * (azimuthal vel.), Cylindrical only.
+// l -- angular momentum = y * w, 3D Cylindrical only.
 // q -- kinetic energy per unit mass 0.5*(u^2 + v^2 + w^2) = 0.5 (u . u)
 // r -- x component vorticity
 // s -- y component vorticity
@@ -248,6 +248,21 @@ int main (int argc, char** argv) {
   if (need[ANGMOMENTUM]) {
     AngMom = new AuxField ( new real_t[allocSize], nz, elmt, 'l' );
     addField[iAdd++] = AngMom;
+    if ( ! ( Geometry::cylindrical() ) ) {
+      cout << "ERROR -- Geometry not Cylindrical "
+           << "but angular momentum requested." 
+           << endl;
+      data_error_angmom++;
+    }
+    if ( NCOM < 3 ) {
+      cout << "ERROR -- Azimuthal Velocity unknown "
+           << "but angular momentum requested." 
+           << endl;
+      data_error_angmom++;
+    }
+    if ( data_error_angmom > 0 ) {
+      exit(EXIT_FAILURE);      
+    }
   }
 
   if (need[ENERGY]) {
@@ -338,7 +353,7 @@ int main (int argc, char** argv) {
 
     if (need[ENERGY]) ((*Nrg).innerProduct(velocity, velocity)) *= 0.5;
 
-    if (need[ANGMOMENTUM]) {
+    if (need[ANGMOMENTUM] && ) {
       (*AngMom = *velocity[2]).mulY();
     }
 
@@ -592,7 +607,7 @@ static void getargs (int    argc   ,
     "  -D        ... add discriminant of velocity gradient tensor\n"
     "                NB: divergence is assumed to be zero. (3D only)\n"
     "  -J        ... add vortex core measure of Jeong & Hussain (3D only)\n"
-    "  -l        ... add angular momentum (Cylindrical only).\n"
+    "  -l        ... add angular momentum (Cylindrical & 3D only).\n"
     "  -a        ... add all fields derived from velocity (above)\n"
     "  -f <func> ... add a computed function <func> of x, y, z, t, etc.\n";
               
