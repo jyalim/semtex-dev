@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 sesh=${1:-"tcf_ramp"}
-np=${2:-8}
+paramfile=${2:-"tcf_ramp.prm"}
+np=${3:-8}
 
 ! [[ -f $sesh ]] && {
   echo "Session file $sesh not present, quitting."    
@@ -42,116 +43,9 @@ mod_session() {
   }
 }
 
-reynolds=(
-  0
-  50
-  100
-  120
-  140
-  150
-  175
-  200
-  300
-  400
-  500
-  525
-  550
-  575
-  600
-  625
-  650
-  750
-  800
-  850
-  875
-  900
-  925
-  950
-  975
-  1000
-  1025
-  1050
-  1075
-  1100
-  1125
-  1150
-  1175
-  1200
-)
-
-dts=(
-  "1e-3"
-  "1e-3"
-  "1e-3"
-  "1e-3"
-  "1e-3"
-  "1e-3"
-  "1e-3"
-  "1e-3"
-  "1e-3"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-4"
-  "1e-5"
-  "1e-5"
-  "1e-5"
-  "1e-5"
-  "1e-5"
-  "1e-5"
-  "1e-5"
-  "1e-5"
-)
-
-nss=(
-  "2e3"
-  "2e3"
-  "2e3"
-  "2e3"
-  "2e3"
-  "2e3"
-  "2e3"
-  "2e3"
-  "2e3"
-  "2e4"
-  "2e4"
-  "2e4"
-  "2e4"
-  "2e4"
-  "2e4"
-  "2e4"
-  "2e4"
-  "2e4"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-  "2e5"
-)
+mapfile res < <(awk '{print $1}' $paramfile)
+mapfile dts < <(awk '{print $2}' $paramfile)
+mapfile nss < <(awk '{print $3}' $paramfile)
 
 [[ -f ${sesh}.rst ]] && rm ${sesh}.rst || :
 
@@ -159,7 +53,7 @@ meshpr    ${sesh} > ${sesh}.msh
 enumerate ${sesh} > ${sesh}.num
 
 for k in ${!nss[@]}; do
-  mod_session "${reynolds[$k]}" "${dts[$k]}" "${nss[$k]}"
+  mod_session "${res[$k]}" "${dts[$k]}" "${nss[$k]}"
   run
   rst
   vtk "${vtkdir}/r.${k}" "${vtkdir}/c.${k}"
