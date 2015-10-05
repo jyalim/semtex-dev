@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
 
-sesh=${1:-"tcf_ramp"}
-paramfile=${2:-"tcf_ramp.prm"}
+sesh=${1:-""}
+paramfile=${2:-"${sesh}.prm"}
 np=${3:-8}
+
+[[ -z $sesh ]] && {
+  echo "No session passed, quitting."
+  exit 50
+} || :
 
 ! [[ -f $sesh ]] && {
   echo "Session file $sesh not present, quitting."    
-  exit 60
+  exit 51
+} || :
+
+! [[ -f $paramfile ]] && {
+  echo "Parameter file $paramfile not present, quitting."    
+  exit 52
 } || :
 
 vtkdir=vtk
