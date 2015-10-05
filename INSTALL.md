@@ -46,6 +46,8 @@ binary names, the following is a sufficient way to get SEMTEX's binaries
 in the path:
 
     export PATH=":$path_to_utility:$path_to_dns:$path_to_elliptic:$PATH:"
-
-
+    export LD_LIBRARY_PATH=":$path_to_lib:$LD_LIBRARY_PATH"
+    export LIBRARY_PATH=":$path_to_lib:$LIBRARY_PATH"
+    export INCLUDE=":$path_to_include:$INCLUDE"
+    export CPATH=":$path_to_include:$CPATH"
 
