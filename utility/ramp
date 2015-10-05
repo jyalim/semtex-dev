@@ -19,8 +19,10 @@ np=${3:-8}
   exit 52
 } || :
 
+savdir=sav
 vtkdir=vtk
 
+! [[ -d $savdir ]] && mkdir -p $savdir || :
 ! [[ -d $vtkdir ]] && mkdir -p $vtkdir || :
 
 run() {
@@ -38,6 +40,14 @@ vtk() {
 rst() {
   cp ${sesh}.fld ${sesh}.rst
 }
+
+sav() {
+  job_id="${1}"
+  cp ${sesh}.fld ${savdir}/${sesh}.${job_id}.fld
+  cp ${sesh}.mdl ${savdir}/${sesh}.${job_id}.mdl
+  cp ${sesh}.his ${savdir}/${sesh}.${job_id}.his
+}
+
 
 mod_session() {
   re="${1}"
@@ -66,5 +76,6 @@ for k in ${!nss[@]}; do
   mod_session "${res[$k]}" "${dts[$k]}" "${nss[$k]}"
   run
   rst
+  sav "${k}"
   vtk "${vtkdir}/r.${k}" "${vtkdir}/c.${k}"
 done
