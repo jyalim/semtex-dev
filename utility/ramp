@@ -1,0 +1,166 @@
+#!/usr/bin/env bash
+
+sesh=${1:-"tcf_ramp"}
+np=${2:-8}
+
+! [[ -f $sesh ]] && {
+  echo "Session file $sesh not present, quitting."    
+  exit 60
+} || :
+
+vtkdir=vtk
+
+! [[ -d $vtkdir ]] && mkdir -p $vtkdir || :
+
+run() {
+  mpirun -n $np dns_mp ${sesh}
+}
+
+vtk() {
+  vtk_rect_rec="${1}"
+  vtk_cyln_rec="${2}"
+  sem2vtk -m ${sesh}.msh -o "${vtk_rect_rec}.vtk" ${sesh}.fld
+  sem2vtk -c -m ${sesh}.msh -o "${vtk_cyln_rec}.vtk" ${sesh}.fld
+  rm tmp.*
+}
+
+rst() {
+  cp ${sesh}.fld ${sesh}.rst
+}
+
+mod_session() {
+  re="${1}"
+  dt="${2}"
+  ns="${3}"
+  sed                                   \
+    -e 's/{{reynolds}}/'"${re}"'/'      \
+    -e 's/{{timestep}}/'"${dt}"'/'      \
+    -e 's/{{iterations}}/'"${ns}"'/'    \
+    ${sesh}.template > ${sesh} || {
+    echo "Template file error, quitting." 
+    exit 70
+  }
+}
+
+reynolds=(
+  0
+  50
+  100
+  120
+  140
+  150
+  175
+  200
+  300
+  400
+  500
+  525
+  550
+  575
+  600
+  625
+  650
+  750
+  800
+  850
+  875
+  900
+  925
+  950
+  975
+  1000
+  1025
+  1050
+  1075
+  1100
+  1125
+  1150
+  1175
+  1200
+)
+
+dts=(
+  "1e-3"
+  "1e-3"
+  "1e-3"
+  "1e-3"
+  "1e-3"
+  "1e-3"
+  "1e-3"
+  "1e-3"
+  "1e-3"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-4"
+  "1e-5"
+  "1e-5"
+  "1e-5"
+  "1e-5"
+  "1e-5"
+  "1e-5"
+  "1e-5"
+  "1e-5"
+)
+
+nss=(
+  "2e3"
+  "2e3"
+  "2e3"
+  "2e3"
+  "2e3"
+  "2e3"
+  "2e3"
+  "2e3"
+  "2e3"
+  "2e4"
+  "2e4"
+  "2e4"
+  "2e4"
+  "2e4"
+  "2e4"
+  "2e4"
+  "2e4"
+  "2e4"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+  "2e5"
+)
+
+[[ -f ${sesh}.rst ]] && rm ${sesh}.rst || :
+
+meshpr    ${sesh} > ${sesh}.msh
+enumerate ${sesh} > ${sesh}.num
+
+for k in ${!nss[@]}; do
+  mod_session "${reynolds[$k]}" "${dts[$k]}" "${nss[$k]}"
+  run
+  rst
+  vtk "${vtkdir}/r.${k}" "${vtkdir}/c.${k}"
+done
