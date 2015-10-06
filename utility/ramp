@@ -57,7 +57,6 @@ sav() {
   cp ${sesh}.his ${savdir}/${sesh}.${job_id}.his
 }
 
-
 mod_session() {
   re="${1}"
   dt="${2}"
@@ -70,6 +69,21 @@ mod_session() {
   }
   echo "Running for Re = $re, dt = $dt, number of iterations = $ns"
 }
+
+combine_mdl() {
+  file="${1}"
+  fid=$(basename ${file#*.} .mdl)
+  re=$(awk 'NR=='$n'+1 {print $1}' ${seshplate})
+  python << __EOF
+from numpy import *
+re    = float($re) if $re > 0 else 1.
+mode0 = loadtxt('$file').T[2,::8] 
+avg   = average(mode0[-100:])/(re**2.)
+print( '{:5.5g} {:5.5g}'.format($re,avg) )
+__EOF
+}
+
+export -f combine_mdl
 
 mapfile -t res < <(awk '{print $1}' $paramfile)
 mapfile -t dts < <(awk '{print $2}' $paramfile)
@@ -88,3 +102,11 @@ for k in ${!nss[@]}; do
   sav "${k}"
   vtk "${vtkdir}/r.${k}" "${vtkdir}/c.${k}"
 done
+
+tmp_combine=/tmp/combine.mdl
+: > $tmp_combine
+popts='--will-cite --gnu'
+
+parallel $popts combine_mdl ::: ${savdif}/*.mdl >> $tmp_combine
+sort -g $tmp_combine > ${sesh}.master.mdl
+rm $tmp_combine
