@@ -83,6 +83,7 @@ static struct {
   "IO_TSO"      ,   50  , /* -- Step interval for time step info.  */
   "IO_MDL"      ,   50  , /* -- Step interval for modal energy.    */
   "IO_WSS"      ,   0   , /* -- Step interval + toggle of WSS out. */
+  "IO_RPP"      ,   0   , /* -- Ramp Parameter Print (0 for quiet) */
 
   "N_P"         ,   5   , /* -- No. of points along element edge.  */
   "N_TIME"      ,   2   , /* -- Order of timestepping scheme.      */
