@@ -68,6 +68,7 @@ mod_session() {
     echo "Template file error, quitting." 
     exit 70
   }
+  echo "Running for Re = $re, dt = $dt, number of iterations = $ns"
 }
 
 mapfile -t res < <(awk '{print $1}' $paramfile)
@@ -76,7 +77,6 @@ mapfile -t nss < <(awk '{print $3}' $paramfile)
 
 [[ -f ${sesh}.rst ]] && rm ${sesh}.rst || :
 
-echo "${res[0]}" "${dts[0]}" "${nss[0]}"
 mod_session "${res[0]}" "${dts[0]}" "${nss[0]}"
 meshpr    ${sesh} > ${sesh}.msh
 enumerate ${sesh} > ${sesh}.num
