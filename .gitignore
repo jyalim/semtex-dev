@@ -30,6 +30,8 @@ utility/noiz
 utility/phase
 utility/preplot
 utility/probe
+utility/probeline
+utility/probeplane
 utility/project
 utility/rectmesh
 utility/repeatxy
