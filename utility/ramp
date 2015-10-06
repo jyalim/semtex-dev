@@ -79,7 +79,7 @@ init_dns() {
 combine_mdl() {
   file="${1}"
   fid=$(basename ${file#*.} .mdl)
-  re=$(awk 'NR=='$n'+1 {print $1}' ${seshplate})
+  re=$(awk 'NR=='$fid'+1 {print $1}' ${paramfile})
   python << __EOF
 from numpy import *
 re    = float($re) if $re > 0 else 1.
@@ -90,6 +90,7 @@ __EOF
 }
 
 export -f combine_mdl
+export paramfile
 
 mapfile -t res < <(awk '{print $1}' $paramfile)
 mapfile -t dts < <(awk '{print $2}' $paramfile)
@@ -103,18 +104,20 @@ if [[ ! -f ${sesh}     ]] || \
   init 
 fi
  
-for k in ${!nss[@]}; do
-  mod_session "${res[$k]}" "${dts[$k]}" "${nss[$k]}"
-  run
-  rst
-  sav "${k}"
-  vtk "${vtkdir}/r.${k}" "${vtkdir}/c.${k}"
-done
+#for k in ${!nss[@]}; do
+#  mod_session "${res[$k]}" "${dts[$k]}" "${nss[$k]}"
+#  run
+#  rst
+#  sav "${k}"
+#  vtk "${vtkdir}/r.${k}" "${vtkdir}/c.${k}"
+#done
+echo "Ramp complete"
 
 tmp_combine=/tmp/combine.mdl
 : > $tmp_combine
-popts='--will-cite --gnu'
+popts="--will-cite --gnu"
 
-parallel $popts combine_mdl ::: ${savdif}/*.mdl >> $tmp_combine
+echo "Combining mdl averages for mode 0"
+parallel $popts combine_mdl ::: ${savdir}/*.mdl >> $tmp_combine
 sort -g $tmp_combine > ${sesh}.master.mdl
 rm $tmp_combine
