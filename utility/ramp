@@ -70,6 +70,12 @@ mod_session() {
   echo "Running for Re = $re, dt = $dt, number of iterations = $ns"
 }
 
+init_dns() {
+  mod_session 0 0 0
+  meshpr    ${sesh} > ${sesh}.msh
+  enumerate ${sesh} > ${sesh}.num
+}
+
 combine_mdl() {
   file="${1}"
   fid=$(basename ${file#*.} .mdl)
@@ -91,10 +97,12 @@ mapfile -t nss < <(awk '{print $3}' $paramfile)
 
 [[ -f ${sesh}.rst ]] && rm ${sesh}.rst || :
 
-mod_session "${res[0]}" "${dts[0]}" "${nss[0]}"
-meshpr    ${sesh} > ${sesh}.msh
-enumerate ${sesh} > ${sesh}.num
-
+if [[ ! -f ${sesh}     ]] || \
+   [[ ! -f ${sesh}.msh ]] || \
+   [[ ! -f ${sesh}.num ]]; then 
+  init 
+fi
+ 
 for k in ${!nss[@]}; do
   mod_session "${res[$k]}" "${dts[$k]}" "${nss[$k]}"
   run
