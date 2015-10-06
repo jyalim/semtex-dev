@@ -1,16 +1,25 @@
 #!/usr/bin/env bash
 
+trapped() {
+  echo -e "\nTrapped--quitting\n"
+  exit 200
+}
+
+trap "trapped" 1 2 3 4 5 6 7 8 11 15
+
 sesh=${1:-""}
 paramfile=${2:-"${sesh}.prm"}
 np=${3:-8}
+
+seshplate=${sesh}.template
 
 [[ -z $sesh ]] && {
   echo "No session passed, quitting."
   exit 50
 } || :
 
-! [[ -f $sesh ]] && {
-  echo "Session file $sesh not present, quitting."    
+! [[ -f $seshplate ]] && {
+  echo "Template file ${sesh}.template not present, quitting."    
   exit 51
 } || :
 
@@ -53,22 +62,22 @@ mod_session() {
   re="${1}"
   dt="${2}"
   ns="${3}"
-  sed                                   \
-    -e 's/{{reynolds}}/'"${re}"'/'      \
-    -e 's/{{timestep}}/'"${dt}"'/'      \
-    -e 's/{{iterations}}/'"${ns}"'/'    \
-    ${sesh}.template > ${sesh} || {
+  sed -e "s/{{reynolds}}/${re}/g; 
+          s/{{timestep}}/${dt}/g;  
+          s/{{iterations}}/${ns}/g" ${seshplate} > ${sesh} || {
     echo "Template file error, quitting." 
     exit 70
   }
 }
 
-mapfile res < <(awk '{print $1}' $paramfile)
-mapfile dts < <(awk '{print $2}' $paramfile)
-mapfile nss < <(awk '{print $3}' $paramfile)
+mapfile -t res < <(awk '{print $1}' $paramfile)
+mapfile -t dts < <(awk '{print $2}' $paramfile)
+mapfile -t nss < <(awk '{print $3}' $paramfile)
 
 [[ -f ${sesh}.rst ]] && rm ${sesh}.rst || :
 
+echo "${res[0]}" "${dts[0]}" "${nss[0]}"
+mod_session "${res[0]}" "${dts[0]}" "${nss[0]}"
 meshpr    ${sesh} > ${sesh}.msh
 enumerate ${sesh} > ${sesh}.num
 
