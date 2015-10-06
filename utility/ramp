@@ -104,13 +104,13 @@ if [[ ! -f ${sesh}     ]] || \
   init 
 fi
  
-#for k in ${!nss[@]}; do
-#  mod_session "${res[$k]}" "${dts[$k]}" "${nss[$k]}"
-#  run
-#  rst
-#  sav "${k}"
-#  vtk "${vtkdir}/r.${k}" "${vtkdir}/c.${k}"
-#done
+for k in ${!nss[@]}; do
+  mod_session "${res[$k]}" "${dts[$k]}" "${nss[$k]}"
+  run
+  rst
+  sav "${k}"
+  vtk "${vtkdir}/r.${k}" "${vtkdir}/c.${k}"
+done
 echo "Ramp complete"
 
 tmp_combine=/tmp/combine.mdl
