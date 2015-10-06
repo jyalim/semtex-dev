@@ -191,10 +191,11 @@ void Analyser::analyse (AuxField** work0, AuxField** work1)
 // original absolute positions.
 // ---------------------------------------------------------------------------
 {
-  const int_t verbose = Femlib::ivalue ("VERBOSE");
-  const int_t cflstep = Femlib::ivalue ("IO_CFL" );
-  const int_t tsostep = Femlib::ivalue ("IO_TSO" );
-  const bool  add     = Femlib::ivalue ("SPAWN"  ) &&
+  const int_t  verbose = Femlib::ivalue ("VERBOSE");
+  const int_t  cflstep = Femlib::ivalue ("IO_CFL" );
+  const int_t  tsostep = Femlib::ivalue ("IO_TSO" );
+  const real_t rpp_val = Femlib::value  ("IO_RPP" );
+  const bool   add     = Femlib::ivalue ("SPAWN"  ) &&
     ! (_src -> step   % Femlib::ivalue ("SPAWN"  ));
 
   list<FluidParticle*>::iterator p;
@@ -204,9 +205,12 @@ void Analyser::analyse (AuxField** work0, AuxField** work1)
   ROOTONLY {
     // -- Run information update.
     if ( tsostep > 0 && ( _src->step % tsostep  == 0 ) ) {
-        cout << "Step: "    << _src->step 
-             << "  Time: "  << _src->time 
-             << endl;
+      cout << "Step: "    << _src->step 
+           << "  Time: "  << _src->time;
+      if ( rpp_val * rpp_val > 0. ) {
+        cout << "  Ramp Parameter: " << rpp_val;
+      }
+      cout << endl;
     }
     //
     // -- Track particles.
