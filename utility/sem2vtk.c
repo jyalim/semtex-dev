@@ -567,7 +567,7 @@ static void write_vtk (FILE *fp)
         offset1 += k*nrns;
         for (i = 0; i < nrns; i++) {
           /* pressure is in 3rd data array */
-          fprintf(fp, "%#14.7g\n", data[j][offset1 + i]);
+          fprintf(fp, "%#14.7g\n", (float) data[j][offset1 + i]);
         }
       }
     }
