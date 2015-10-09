@@ -1,0 +1,81 @@
+#-----------------------------------------------------------------------
+# 1 element driven cavity flow.
+# (x,y) = (y,x)
+# (u,v) = (y,x)'
+# p = pressure
+#-----------------------------------------------------------------------
+# Models problem description from
+#
+# Authors: 
+# URL:    
+#-----------------------------------------------------------------------
+
+<FIELDS>
+  u v p 
+</FIELDS>
+
+<TOKENS>
+  IO_CFL  = 1e2       
+  IO_TSO  = 1e2
+  IO_FLD  = 1e3
+  IO_HIS  = 10
+  N_P     = 9 
+  N_TIME  = 3
+  Re      = 100
+  N_STEP  = 1e4        
+  D_T     = 1e-2
+  TOL_REL = 1e-12      
+  TOL_ABS = TOL_REL    
+  KINVIS  = 1./Re
+</TOKENS>
+
+<GROUPS NUMBER=2>
+  1 w wall
+  2 v velocity
+</GROUPS>
+
+<BCS NUMBER=2>
+  1 w 3
+      <D> u = 0 </D>
+      <D> v = 0 </D>
+      <H> p     </H>
+  2 v 3
+      <D> u = -(1-x^2)^2 </D>
+      <D> v = 0          </D>
+      <H> p              </H>
+</BCS>
+
+<NODES NUMBER=9>
+  1  0.00   0.00    0.00
+  2  0.40   0.00    0.00 
+  3  1.00   0.00    0.00 
+  4  0.00   0.70    0.00
+  5  0.40   0.70    0.00 
+  6  1.00   0.70    0.00 
+  7  0.00   1.00    0.00
+  8  0.40   1.00    0.00
+  9  1.00   1.00    0.00
+</NODES>
+
+<ELEMENTS NUMBER=4>
+  1   <Q>   1  2  5  4  </Q>
+  2   <Q>   2  3  6  5  </Q>
+  3   <Q>   4  5  8  7  </Q>
+  4   <Q>   5  6  9  8  </Q>
+</ELEMENTS>
+
+<SURFACES NUMBER=8>
+  1  1   1  <B>  w  </B>
+  2  2   1  <B>  w  </B>
+  3  2   2  <B>  w  </B>
+  4  4   2  <B>  w  </B>
+  5  4   3  <B>  v  </B>
+  6  3   3  <B>  v  </B>
+  7  3   4  <B>  w  </B>
+  8  1   4  <B>  w  </B>
+</SURFACES>
+
+<HISTORY NUMBER=1>
+  1 .2 .2 0
+</HISTORY>
+
