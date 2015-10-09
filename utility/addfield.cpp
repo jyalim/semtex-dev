@@ -248,6 +248,7 @@ int main (int argc, char** argv) {
   if (need[ANGMOMENTUM]) {
     AngMom = new AuxField ( new real_t[allocSize], nz, elmt, 'l' );
     addField[iAdd++] = AngMom;
+    int data_error_angmom = 0;
     if ( ! ( Geometry::cylindrical() ) ) {
       cout << "ERROR -- Geometry not Cylindrical "
            << "but angular momentum requested." 
@@ -353,7 +354,7 @@ int main (int argc, char** argv) {
 
     if (need[ENERGY]) ((*Nrg).innerProduct(velocity, velocity)) *= 0.5;
 
-    if (need[ANGMOMENTUM] && ) {
+    if (need[ANGMOMENTUM]) {
       (*AngMom = *velocity[2]).mulY();
     }
 
