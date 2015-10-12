@@ -358,7 +358,7 @@ int main (int argc, char** argv) {
       (*AngMom = *velocity[2]).mulY();
     }
 
-    if (gradient) {		// -- All other things.
+    if (gradient) {   // -- All other things.
 
       // -- First make all VG components.
 
