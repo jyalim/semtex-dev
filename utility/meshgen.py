@@ -86,18 +86,20 @@ print('</ELEMENTS>\n')
 
 print('<SURFACES NUMBER={:d}>'.format(num_surfaces))
 c = 1
+N = n-1
+M = m-1
 for edge in range(1,5):
   if edge == 1:
-    elems     = [ j+1 for j in range(m-1) ]
+    elems     = [ j for j in range(1,m) ]
     temp_type = args.boundary[0]
   elif edge == 2:
-    elems = [ (m-1)*(k+1) for k in range(n-1) ]
+    elems = [ M*k for k in range(1,n) ]
     temp_type = args.boundary[1]
   elif edge == 3:
-    elems = [ num_elements - j for j in range(m-1) ]
+    elems = [ num_elements - j for j in range(M) ]
     temp_type = args.boundary[2]
   elif edge == 4:
-    elems = [ (m-1)*(n-2) - k for k in range(n-1) ]
+    elems = [ M*(N - k) + 1 for k in range(1,n) ]
     temp_type = args.boundary[3]
   for e in elems:
     out = [c, e, edge ]
