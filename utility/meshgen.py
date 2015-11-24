@@ -30,7 +30,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 if args.file:
-  d = np.loadtxt(args.file).T
+  x,y = np.loadtxt(args.file).T
 else:
   if args.x:
     x = np.linspace(args.x[0],args.x[1],int(args.x[2]))
