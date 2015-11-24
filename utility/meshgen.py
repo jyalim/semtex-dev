@@ -17,6 +17,15 @@ same structure.                                                        \
 fhelp='read nodes from file'
 xhelp='1st column linspace(a,b,n)'
 yhelp='2nd column linspace(a,b,n)'
+bhelp='Boundary conditions for bottom, right, top, and left wall'
+
+bdef = [
+  'temp-bottom-wall',
+  'temp-right-wall ',
+  'temp-top-wall   ',
+  'temp-left-wall  ',
+]
+
 parser.add_argument(
   '--file','-f',type=str,help=fhelp,default=None,metavar='xyz-file'
 )
@@ -25,6 +34,10 @@ parser.add_argument(
 )
 parser.add_argument(
   '-y',type=float,help=yhelp,default=None,metavar='a b N',nargs=3
+)
+parser.add_argument(
+  '--boundary','-b',
+  type=str,help=bhelp,default=bdef,metavar='b r t l',nargs=4
 )
 
 args = parser.parse_args()
@@ -76,16 +89,16 @@ c = 1
 for edge in range(1,5):
   if edge == 1:
     elems     = [ j+1 for j in range(m-1) ]
-    temp_type = 'temp-bottom    '
+    temp_type = args.boundary[0]
   elif edge == 2:
     elems = [ (m-1)*(k+1) for k in range(n-1) ]
-    temp_type = 'temp-right-side'
+    temp_type = args.boundary[1]
   elif edge == 3:
     elems = [ num_elements - j for j in range(m-1) ]
-    temp_type = 'temp-top       '
+    temp_type = args.boundary[2]
   elif edge == 4:
     elems = [ (m-1)*(n-2) - k for k in range(n-1) ]
-    temp_type = 'temp-left-side '
+    temp_type = args.boundary[3]
   for e in elems:
     out = [c, e, edge ]
     s_out  = '  ' + (3*'{:>4d}  ').format(*out)
