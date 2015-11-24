@@ -10,7 +10,7 @@ PROG = dns
 SEM   = ..
 VPATH = $(SEM)/src
 
-ifdef MPI		# -- Make a parallel executable.
+ifdef MPI   # -- Make a parallel executable.
   PROG := $(PROG)_mp
 endif
 
@@ -18,7 +18,7 @@ endif
 # Semtex standard sources.
 #
 SEMFILES = analysis auxfield bcmgr boundary bsys condition domain   \
-	   edge element family feml field geometry history  \
+           edge element family feml field geometry history  \
            integration matrix mesh misc particle statistics \
            fieldforce data2df svv
 SEMOBJ   = $(addsuffix .o,$(SEMFILES))

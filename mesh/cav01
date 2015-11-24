@@ -6,15 +6,15 @@
 	N_Z       = 1
 	BETA      = 1.0
 
-	ReA	  = 535
+	ReA       = 535
 	ReW       = 20
-	U	  = 1.0
-	KINVIS	  = 1.0/ReA
+	U         = 1.0
+	KINVIS    = 1.0/ReA
 	OMEGA     = ReW/ReA
 	PERIOD    = 1.0/OMEGA
 	STEPS_P   = 3*1024
 	D_T       = PERIOD/STEPS_P
-	N_STEP    = 1*STEPS_P	
+	N_STEP    = 1*STEPS_P
 	N_TIME    = 2
 
 	IO_CFL    = STEPS_P/128
@@ -37,13 +37,13 @@
 
 <BCS NUMBER=2>
 	1	w	3
-			<D>  u = 0.0			</D>
-			<D>  v = 0.0			</D>
-			<H>  p				</H>
+    <D> u = 0.0      </D>
+    <D> v = 0.0      </D>
+    <H> p            </H>
 	2	v	3
-			<D>  u = U*sin(TWOPI*OMEGA*t)*(1-exp(-200*(1+x))^4)*(1-exp(-200*(1-x))^4)	</D>
-			<D>  v = 0.0			</D>
-			<H>  p				</H>
+    <D> u = U*sin(TWOPI*OMEGA*t)*(1-exp(-200*(1+x))^4)*(1-exp(-200*(1-x))^4)</D>
+    <D> v = 0.0  </D>
+    <H> p        </H>
 </BCS>
 
 <HISTORY NUMBER=2>
