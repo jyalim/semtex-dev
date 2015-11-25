@@ -15,6 +15,8 @@ same structure.                                                        \
 ')
 
 fhelp='read nodes from file'
+xfhelp='read x nodes from file'
+yfhelp='read y nodes from file'
 xhelp='1st column linspace(a,b,n)'
 yhelp='2nd column linspace(a,b,n)'
 bhelp='Boundary conditions for bottom, right, top, and left wall'
@@ -28,6 +30,12 @@ bdef = [
 
 parser.add_argument(
   '--file','-f',type=str,help=fhelp,default=None,metavar='xyz-file'
+)
+parser.add_argument(
+  '--xfile',type=str,help=xfhelp,default=None,metavar='x.txt'
+)
+parser.add_argument(
+  '--yfile',type=str,help=yfhelp,default=None,metavar='y.txt'
 )
 parser.add_argument(
   '-x',type=float,help=xhelp,default=None,metavar='a b N',nargs=3
@@ -44,6 +52,15 @@ args = parser.parse_args()
 
 if args.file:
   x,y = np.loadtxt(args.file).T
+elif args.xfile or args.yfile:
+  if args.xfile:
+    x = np.loadtxt(args.xfile).T
+  if args.yfile:
+    y = np.loadtxt(args.yfile).T
+  if args.xfile and not args.yfile:
+    y = x.copy()
+  elif args.yfile and not args.xfile:
+    x = y.copy()
 else:
   if args.x:
     x = np.linspace(args.x[0],args.x[1],int(args.x[2]))
